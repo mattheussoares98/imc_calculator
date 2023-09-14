@@ -7,10 +7,16 @@ class TextFormFieldPersonalized {
     required String labelText,
     required String? Function(String?)? validator,
     required TextInputType textInputType,
+    required void Function(String)? onFieldSubmitted,
+    required FocusNode? focusNode,
+    required int? maxLength,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
+        focusNode: focusNode,
+        maxLength: maxLength,
+        onFieldSubmitted: onFieldSubmitted,
         style: const TextStyle(
           fontWeight: FontWeight.w500,
           decorationColor: Colors.black,

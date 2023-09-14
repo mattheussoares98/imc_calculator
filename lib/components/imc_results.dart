@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:imc_calculator/controllers/imc_controller.dart';
+import 'package:imc_calculator/database/sqflite_database.dart';
 
 import '../models/imc_model.dart';
 
 class ImcResults extends StatefulWidget {
   final List<ImcModel> imcResults;
+  final Function setState;
   const ImcResults({
     required this.imcResults,
+    required this.setState,
     Key? key,
   }) : super(key: key);
 
@@ -14,37 +18,16 @@ class ImcResults extends StatefulWidget {
 }
 
 class _ImcResultsState extends State<ImcResults> {
-  static double _calculateImc({
-    required double weight,
-    required double height,
-  }) {
-    return weight / (height * height);
-  }
-
   static Widget _icmResult({
     required double weight,
     required double height,
   }) {
-    double imc = _calculateImc(weight: weight, height: height);
-    String imcResultText = "";
+    String imcResultText = ImcController.imcResult(
+      weight: weight,
+      height: height,
+    );
 
-    if (imc < 16) {
-      imcResultText = "Magreza grave";
-    } else if (imc < 17) {
-      imcResultText = "Magreza moderada";
-    } else if (imc < 18.5) {
-      imcResultText = "Magreza leve";
-    } else if (imc < 25) {
-      imcResultText = "Saudável";
-    } else if (imc < 30) {
-      imcResultText = "Sobrepeso";
-    } else if (imc < 35) {
-      imcResultText = "Obesidade grau I";
-    } else if (imc < 40) {
-      imcResultText = "Obesidade grau II (severa)";
-    } else {
-      imcResultText = "Obesidade grau III (mórbido)";
-    }
+    double imc = ImcController.calculateImc(weight: weight, height: height);
 
     return FittedBox(
       child: Row(
@@ -76,7 +59,7 @@ class _ImcResultsState extends State<ImcResults> {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
+      child: Wrap(
         children: [
           Text(
             title,
@@ -134,25 +117,54 @@ class _ImcResultsState extends State<ImcResults> {
                 shadowColor: Colors.blue,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      nameAndValue(
-                        title: "Nome: ",
-                        subtitle: imcModel.name,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            nameAndValue(
+                              title: "Nome: ",
+                              subtitle: imcModel.name,
+                            ),
+                            nameAndValue(
+                              title: "Altura: ",
+                              subtitle: "${imcModel.height}m",
+                            ),
+                            nameAndValue(
+                              title: "Peso: ",
+                              subtitle: "${imcModel.weight} KG",
+                            ),
+                            _icmResult(
+                              weight: imcModel.weight,
+                              height: imcModel.height,
+                            ),
+                          ],
+                        ),
                       ),
-                      nameAndValue(
-                        title: "Altura: ",
-                        subtitle: "${imcModel.height}m",
-                      ),
-                      nameAndValue(
-                        title: "Peso: ",
-                        subtitle: "${imcModel.weight} KG",
-                      ),
-                      _icmResult(
-                        weight: imcModel.weight,
-                        height: imcModel.height,
-                      ),
+                      InkWell(
+                        onTap: () async {
+                          await SQLiteDataBase.remove(id: imcModel.id!);
+                          widget.imcResults.removeWhere(
+                              (element) => element.id == imcModel.id);
+                          widget.setState();
+                        },
+                        child: Column(
+                          children: const [
+                            Text(
+                              "Excluir",
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                            Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
