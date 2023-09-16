@@ -17,7 +17,7 @@ class ImcController {
     bool isValid = validateForm();
 
     if (isValid) {
-      int id = await SQLiteDataBase.saveNewImcAndReturnId(imcModel: imcModel);
+      int id = await SQFLiteDataBase.saveNewImcAndReturnId(imcModel: imcModel);
 
       if (id != 0) {
         imcModel.id = id;

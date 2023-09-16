@@ -145,13 +145,13 @@ class _ImcResultsState extends State<ImcResults> {
                       ),
                       InkWell(
                         onTap: () async {
-                          await SQLiteDataBase.remove(id: imcModel.id!);
+                          await SQFLiteDataBase.remove(id: imcModel.id!);
                           widget.imcResults.removeWhere(
                               (element) => element.id == imcModel.id);
                           widget.setState();
                         },
-                        child: Column(
-                          children: const [
+                        child: const Column(
+                          children: [
                             Text(
                               "Excluir",
                               style: TextStyle(

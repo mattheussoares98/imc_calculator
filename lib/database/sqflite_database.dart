@@ -10,7 +10,7 @@ String scriptCreateTable = ''' CREATE TABLE imc (
           imcResult TEXT
           );''';
 
-class SQLiteDataBase {
+class SQFLiteDataBase {
   static Database? _db;
   static Future<Database> _getDatabase() async {
     if (_db == null) {
@@ -37,7 +37,7 @@ class SQLiteDataBase {
   static Future<List<ImcModel>> getImcData() async {
     List<ImcModel> imcResults = [];
     try {
-      var db = await SQLiteDataBase._getDatabase();
+      var db = await SQFLiteDataBase._getDatabase();
       var result =
           await db.rawQuery('SELECT id, name, height, weight FROM imc');
       for (var element in result) {
@@ -62,7 +62,7 @@ class SQLiteDataBase {
   }) async {
     int id = 0;
     try {
-      var db = await SQLiteDataBase._getDatabase();
+      var db = await SQFLiteDataBase._getDatabase();
       id = await db.rawInsert(
           'INSERT INTO imc (height, weight, name, imcResult) values(?,?,?,?)', [
         imcModel.height,
@@ -80,7 +80,7 @@ class SQLiteDataBase {
   // static Future<void> update({
   //   required ImcModel imcModel,
   // }) async {
-  //   var db = await SQLiteDataBase._getDatabase();
+  //   var db = await SQFLiteDataBase._getDatabase();
   //   await db.rawInsert(
   //       'UPDATE imc SET imcResult = ?, height = ?, name = ?, weight = ? WHERE id = ?',
   //       [
@@ -92,7 +92,7 @@ class SQLiteDataBase {
   // }
 
   static Future<void> remove({required int id}) async {
-    var db = await SQLiteDataBase._getDatabase();
+    var db = await SQFLiteDataBase._getDatabase();
     await db.rawInsert('DELETE FROM imc WHERE id = ?', [id]);
   }
 }

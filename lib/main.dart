@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   List<ImcModel> _imcResults = [];
 
   _getImcResults() async {
-    _imcResults = await SQLiteDataBase.getImcData();
+    _imcResults = await SQFLiteDataBase.getImcData();
     setState(() {});
   }
 
